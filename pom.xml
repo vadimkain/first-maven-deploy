@@ -40,13 +40,13 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.23</version>
             <scope>runtime</scope>
-            <!--            <optional>true</optional>-->
+            <!-- <optional>true</optional>-->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>5.0.5.RELEASE</version>
-            <!--            Игнорируем зависимости для решения транзитивной проблемы. См. Maven 10-->
+            <!-- Игнорируем зависимости для решения транзитивной проблемы. См. Maven 10-->
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -60,4 +60,22 @@
             <version>5.1.7.RELEASE</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <!-- Конфигурируем плагин-->
+                <configuration>
+                    <!-- Устанавливаем версию исходников -->
+                    <source>15</source>
+                    <!-- И компилируем в 19 версию java. По умолчанию 1.7-->
+                    <!-- Теперь после билда мавена можно в плагин классах можно использовать фичи 19й java-->
+                    <target>19</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
