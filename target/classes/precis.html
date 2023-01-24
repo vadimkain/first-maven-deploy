@@ -34,6 +34,15 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 14. Default Lifecycle. Package phase</h1>
+    <img src="mvn-11-1.png" width="70%">
+    <p>
+        Между test и package есть <b>prepare-package</b>. Она никак не связана с goal'ами и служит для того, чтобы мы
+        могли как-то привязать свои плагины и goal'ы к этой фазе или что-то изменить для фазы package. В самой фазе
+        package происходит упаковка проекта в архив. Обычно это .jar архив, но может быть и .war и много другие.
+    </p>
+</article>
+<article>
     <h1>Maven. 13. Default Lifecycle. Test phase. Surefire plugin</h1>
     <img src="mvn-11-1.png" width="70%">
     <p>
@@ -75,8 +84,11 @@
         </li>
     </ul>
     <p>
-        Введя <code>mvn test</code> в директории target получим папку test-classes.
+        Введя <code>mvn test</code> в директории target получим папку test-classes в которой будут лежать
+        скомпилированные
+        классы из src/test.
     </p>
+    <img src="mvn-13-2.png" width="30%">
 </article>
 <article>
     <h1>Maven. 12. Default Lifecycle. Validate and Compile phases</h1>
