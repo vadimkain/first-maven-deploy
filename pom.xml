@@ -7,7 +7,7 @@
     <groupId>com.kainv</groupId>
     <artifactId>first-maven</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>first-maven</name>
 
@@ -63,11 +63,13 @@
     </dependencies>
 
     <build>
+        <!-- Результат упаковки будет называться как ROOT. См. Maven 15 -->
+        <finalName>ROOT</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
                 <!-- Конфигурируем плагин-->
                 <configuration>
                     <!-- Устанавливаем версию исходников -->
@@ -86,6 +88,12 @@
                 <configuration>
                     <!-- <skipTests>true</skipTests>-->
                 </configuration>
+            </plugin>
+            <!-- Для того чтобы работал war плагин-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
             </plugin>
         </plugins>
     </build>
