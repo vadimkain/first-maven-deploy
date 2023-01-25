@@ -34,6 +34,94 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 17. Default Lifecycle. Verify phase. Failsafe plugin</h1>
+    <img src="mvn-11-1.png" alt="" width="60%">
+    <h2>Рассмотрим verify</h2>
+    Между package и verify есть три фазы:
+    <ul>
+        <li>pre-integration-test</li>
+        <li>integration-test</li>
+        <li>post-integration-test</li>
+    </ul>
+    <p>
+        Вместе с четырьмя вместе с verify нет ни одной связанной goal'ы по умолчанию. Соответственно, мы сами можем
+        привязать goal'ы как захотим. Эти фазы связаны с проверкой и запуском интеграционных тестов. Т.е. если на фазе
+        <b>test</b> был запуск именно unit-тестов, то на <b>verify</b> именно интеграционные тесты (те тесты, которые
+        проверяют взаимодействие нескольких модулей, нескольких элементов нашего приложения).
+    </p>
+    <p>
+        Если вызовем <code>mvn verify</code>, то ничего не произойдёт после этапа <b>package</b> потому что никакие
+        goal'ы не были связаны с фазой <b>verify</b>. На самом деле можем привязать плагин специальный и его goal
+        специальный для integration-тестов. Называется он <b>failsafe plugin usage</b>. Т.е. получается, что если
+        говорим про surefire плагин, который занимается тем, что запускает юнит-тесты, то именно failsafe занят
+        интеграционными тестами.
+    </p>
+    <p>
+        В документации к failsafe usage plugin есть документация и инструкция как его подключать :
+        <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/usage.html">
+            https://maven.apache.org/surefire/maven-failsafe-plugin/usage.html
+        </a>. Как написано в документации, мы должны использовать <code>verify</code> основную фазу, а не
+        вспомогательную фазу <code>integration-test</code> когда хотим запустить интеграционные тесты. Но как понять
+        плагину, где интеграционные тесты, а где юнит тесты? Все тесты <b>должны придерживаться</b> основного
+        naming-convention, т.е. должны содержать префикс или постфикс (в нашем примере это постфикс Test и TestCase).
+        То же самое и с интеграционными тестами, только для интеграционных тестов другие префиксы и постфиксы.
+    </p>
+    <p>
+        Из документации видим, что naming-convention для интеграционных тестов:
+    </p>
+    <ul>
+        <li>
+            <code>**/IT*.java</code>
+        </li>
+        <li>
+            <code>**/*IT.java</code>
+        </li>
+        <li>
+            <code>**/*ITCase.java</code>
+        </li>
+    </ul>
+    <p>
+        Мы так же можем менять naming-convention в <code>&lt;configuration>&lt;configuration/></code> и в ней
+        используем <code>&lt;includes>&lt;/includes></code>
+    </p>
+    <h2>Подключим плагин и создадим интеграционный тест.</h2>
+    <p>
+        Создадим папку и в ней соответствующий класс:
+    </p>
+    <img src="mvn-17-2.png" alt="" width="30%">
+    <p>
+        Подключим в POM соответствующий плагин:
+    </p>
+    <pre>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-failsafe-plugin&lt;/artifactId>
+            &lt;version>3.0.0-M5&lt;/version>
+            &lt;executions>
+                &lt;!-- Привязываем goal'ы на определенной фазе -->
+                &lt;execution>
+                    &lt;!-- Оба goal будут привязаны к одной фазе -->
+                    &lt;goals>
+                        &lt;goal>integration-test&lt;/goal>
+                        &lt;goal>verify&lt;/goal>
+                    &lt;/goals>
+                    &lt;!-- &lt;phase>test&lt;/phase>-->
+                &lt;/execution>
+            &lt;/executions>
+        &lt;/plugin>
+    </pre>
+    <p>
+        Выполним команду <code>mvn verify</code>. Вся жизнедеятельность проекта будет в target директории, здесь будет
+        результат всего, в том числе и тестов:
+    </p>
+    <table>
+        <tr>
+            <td><img src="mvn-17-3.png" width="80%"></td>
+            <td><img src="mvn-17-4.png" width="100%"></td>
+        </tr>
+    </table>
+</article>
+<article>
     <h1>Maven. 16. Привязка plugin goal к phase</h1>
     <p>
         Любой из плагинов и любой из goal'ов этих плагинов можно прикрутить к любой фазе и вызывать его. Разберёмся
