@@ -34,6 +34,107 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 16. Привязка plugin goal к phase</h1>
+    <p>
+        Любой из плагинов и любой из goal'ов этих плагинов можно прикрутить к любой фазе и вызывать его. Разберёмся
+        как это делать.
+    </p>
+    <p>
+        Правило хорошего тона говорит, что должны переопределять все дефолтные плагины в нашей super POM.
+    </p>
+    <p>
+        Делаем это при помощи resource плагина. У него помимо resources и testResources goal'ов есть ещё copyResources.
+        Он занимается тем, что копирует какие-то статические файлы из одной директории в другую которую укажем. Он
+        никак не привязан ни к какой фазе по умолчанию, следовательно, наша задача - использовать этот плагин и
+        привязать к какой-то фазе чтобы он выполнился во время запуска нашего default lifecycle. Для этого мы должны
+        его переопределить. Т.е., в директории plugins, которая лежит в свою очередь в директории build мы
+        переопределяем
+        plugin.
+    </p>
+    <p>
+        Создадим директорию docker с файлом docker-compose.yml и скопируем его с директории docker в директорию target.
+    </p>
+    <pre>
+        &lt;plugin>
+                &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                &lt;artifactId>maven-resources-plugin&lt;/artifactId>
+                &lt;version>3.2.0&lt;/version>
+            &lt;!-- Этот тег позволяет вызывать goal'ы, которые укажем -->
+                &lt;executions>
+                    &lt;!-- Указываем goal, который нужно выполнить -->
+                    &lt;execution>
+                        &lt;!-- Указыаем id-->
+                        &lt;id>copy-docker-files&lt;/id>
+                        &lt;goals>
+                            &lt;goal>copy-resources&lt;/goal>
+                        &lt;/goals>
+                        &lt;!-- Привязываем фазу к goal'у (указываем фазу) -->
+                        &lt;phase>validate&lt;/phase>
+                        &lt;!-- Указываем, что именно будем конфигурировать для goal -->
+                        &lt;configuration>
+                            &lt;!-- Указываем, в какую директорию выгружаем ресурсы -->
+                            &lt;outputDirectory>${project.basedir}/target&lt;/outputDirectory>
+                            &lt;!-- Указываем ресурсы, которые хотим скопировать -->
+                            &lt;resources>
+                                &lt;resource>
+                                    &lt;directory>${project.basedir}/docker&lt;/directory>
+                                &lt;/resource>
+                            &lt;/resources>
+                        &lt;/configuration>
+                    &lt;/execution>
+                &lt;/executions>
+            &lt;/plugin>
+    </pre>
+    <p>
+        Через <code>${}</code> можем обратиться ко всем переменным, properties нашего maven. Даже те, который самы
+        ввели.
+        Сами создавать properties можем в тэге <code>&lt;properties>&lt;/properties></code>.
+        <code>${project.basedir}</code> указывает корневую директорию (в нашем случае first-maven). <code>project</code>
+        указывает на ROOT название в нашей POMке. Можем также обратиться и к build:
+        <code>&lt;properties>${project.build}&lt;/properties></code>
+    </p>
+    <p>
+        Теперь вызовем <code>mvn compile</code> и увидим, что на этапе валидации вызвался copy-resources с указанным
+        id (copy-docker-files). И если перейдём в директорию target, то увидим перемещённую статику:
+    </p>
+    <table>
+        <tr>
+            <td><img src="mvn-16-1.png" width="100%"></td>
+            <td><img src="mvn-16-2.png" width="100%"></td>
+        </tr>
+    </table>
+    <p>
+        Мы также можем сделать с maven-compiler-plugin, т.е. добавить туда executions. Вызовем goal "compile" на фазе
+        validate. Следовательно, execution говорит о том, что надо ещё вызвать compile даже учитывая, что и так есть
+        дефолтное goal в нашем maven-compiler-plugin, которое привязано к нашему build lifecycle к фазе compile, но
+        мы хотим ещё одну вызвать compile на фазе validate.
+    </p>
+    <pre>
+        &lt;plugin>
+                &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                &lt;artifactId>maven-compiler-plugin&lt;/artifactId>
+                &lt;version>3.8.1&lt;/version>
+            &lt;!-- Конфигурируем плагин-->
+                &lt;configuration>
+                    &lt;!-- Устанавливаем версию исходников -->
+                    &lt;source>15&lt;/source>
+                    &lt;!-- И компилируем в 19 версию java. По умолчанию 1.7-->
+                    &lt;!-- Теперь после билда мавена можно в плагин классах можно использовать фичи 19й java-->
+                    &lt;target>19&lt;/target>
+                &lt;/configuration>
+                &lt;executions>
+                    &lt;execution>
+                        &lt;goals>
+                            &lt;goal>compile&lt;/goal>
+                        &lt;/goals>
+                        &lt;phase>validate&lt;/phase>
+                    &lt;/execution>
+                &lt;/executions>
+            &lt;/plugin>
+    </pre>
+    <p>Вызовем <code>mvn compile</code> и </p>
+</article>
+<article>
     <h1>Maven. 15. Packaging type war</h1>
     <p>
         Разберёмся с packaging type <b>war</b>. Чтобы создать java web-приложение есть два варианта: создать сразу
@@ -91,7 +192,7 @@
     <p>
         Теперь, после упаковки результат target будет такой:
     </p>
-    <img src="mvn-15-8.png" alt="">
+    <img src="mvn-15-8.png" width="20%">
 
 </article>
 <article>

@@ -68,6 +68,35 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <!-- Этот тег позволяет вызывать goal'ы, которые укажем -->
+                <executions>
+                    <!-- Указываем goal, который нужно выполнить -->
+                    <execution>
+                        <!-- Указыаем id-->
+                        <id>copy-docker-files</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <!-- Привязываем фазу к goal'у (указываем фазу) -->
+                        <phase>validate</phase>
+                        <!-- Указываем, что именно будем конфигурировать для goal -->
+                        <configuration>
+                            <!-- Указываем, в какую директорию выгружаем ресурсы -->
+                            <outputDirectory>${project.basedir}/target</outputDirectory>
+                            <!-- Указываем ресурсы, которые хотим скопировать -->
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/docker</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <!-- Конфигурируем плагин-->
@@ -78,6 +107,14 @@
                     <!-- Теперь после билда мавена можно в плагин классах можно использовать фичи 19й java-->
                     <target>19</target>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>validate</phase>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Запуск тестов происходит через surefire плагина-->
             <plugin>
