@@ -34,6 +34,24 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 18. Default Lifecycle. Install phase</h1>
+    <p>
+        После того, как отработали все пункты до verify успешно - можно поделиться зависимостью и сохранить её в
+        локальный .m2/repository. Для этого нужна фаза <b>install</b>. Другими словами говоря, когда делаем install -
+        берём содержимое файлов из директории target и помещаем их в локальный .m2/repository. Это дефолтное поведение.
+        Его можно переписать, но не нужно.
+    </p>
+    <p>
+        После выполнения install мы найдём в локальном репозитории построенный
+        artifact и он будет лежать в соответствующей папке в зависимости от того, что ввели в groupId, artifactId
+        и version. После того как поместили в локальный репозиторий, к нему смогут обращаться другие проекты.
+    </p>
+    <img src="mvn-8-1.png" alt="" width="70%">
+    <p>
+        Запустим фазу install: <code>mvn install</code>
+    </p>
+</article>
+<article>
     <h1>Maven. 17. Default Lifecycle. Verify phase. Failsafe plugin</h1>
     <img src="mvn-11-1.png" alt="" width="60%">
     <h2>Рассмотрим verify</h2>
@@ -110,6 +128,16 @@
             &lt;/executions>
         &lt;/plugin>
     </pre>
+    <p>
+        Выполним команду <code>mvn verify</code>. Вся жизнедеятельность проекта будет в target директории, здесь будет
+        результат всего, в том числе и тестов:
+    </p>
+    <table>
+        <tr>
+            <td><img src="mvn-17-3.png" width="80%"></td>
+            <td><img src="mvn-17-4.png" width="100%"></td>
+        </tr>
+    </table>
 </article>
 <article>
     <h1>Maven. 16. Привязка plugin goal к phase</h1>

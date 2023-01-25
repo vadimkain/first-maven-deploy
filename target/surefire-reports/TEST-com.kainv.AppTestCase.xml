@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="RU"/>
     <property name="sun.boot.library.path" value="C:\Users\kainv\.jdks\openjdk-19.0.1\bin"/>
-    <property name="sun.java.command" value="C:\Users\kainv\AppData\Local\Temp\surefire5148539436553122639\surefirebooter7302799455838098540.jar C:\Users\kainv\AppData\Local\Temp\surefire5148539436553122639 2023-01-25T13-32-32_030-jvmRun1 surefire6708438432927117516tmp surefire_03569668605906407309tmp"/>
+    <property name="sun.java.command" value="C:\Users\kainv\AppData\Local\Temp\surefire8437953107190016579\surefirebooter8271260872382936705.jar C:\Users\kainv\AppData\Local\Temp\surefire8437953107190016579 2023-01-25T13-52-05_131-jvmRun1 surefire4619062957266695552tmp surefire_0727556015338410087tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\target\test-classes;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\target\classes;C:\Users\kainv\.m2\repository\junit\junit\4.13.1\junit-4.13.1.jar;C:\Users\kainv\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\kainv\.m2\repository\jakarta\servlet\jakarta.servlet-api\5.0.0\jakarta.servlet-api-5.0.0.jar;C:\Users\kainv\.m2\repository\org\postgresql\pgjdbc-osgi-test\42.3.8\pgjdbc-osgi-test-42.3.8.jar;C:\Users\kainv\.m2\repository\mysql\mysql-connector-java\8.0.23\mysql-connector-java-8.0.23.jar;C:\Users\kainv\.m2\repository\com\google\protobuf\protobuf-java\3.11.4\protobuf-java-3.11.4.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-webmvc\5.0.5.RELEASE\spring-webmvc-5.0.5.RELEASE.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-context\5.0.5.RELEASE\spring-context-5.0.5.RELEASE.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-core\5.0.5.RELEASE\spring-core-5.0.5.RELEASE.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-jcl\5.0.5.RELEASE\spring-jcl-5.0.5.RELEASE.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-expression\5.0.5.RELEASE\spring-expression-5.0.5.RELEASE.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-web\5.0.5.RELEASE\spring-web-5.0.5.RELEASE.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-aop\5.1.7.RELEASE\spring-aop-5.1.7.RELEASE.jar;C:\Users\kainv\.m2\repository\org\springframework\spring-beans\5.1.7.RELEASE\spring-beans-5.1.7.RELEASE.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\kainv\AppData\Local\Temp\surefire5148539436553122639\surefirebooter7302799455838098540.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\kainv\AppData\Local\Temp\surefire8437953107190016579\surefirebooter8271260872382936705.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="19.0.1+10-21"/>
