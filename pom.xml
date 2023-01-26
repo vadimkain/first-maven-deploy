@@ -156,4 +156,20 @@
             </plugin>
         </plugins>
     </build>
+
+
+    <distributionManagement>
+        <!-- Указываем удалённый репозиторий для snapshot версий -->
+        <snapshotRepository>
+            <!-- Указываем id удалённого репозитория -->
+            <id>nexus</id>
+            <!-- Указываем url удалённого snapshot репозитория -->
+            <url>http://localhost:9000/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <!-- Указываем удалённый репозиторий для релизных версий -->
+        <repository>
+            <id>nexus</id>
+            <url>http://localhost:9000/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
 </project>
