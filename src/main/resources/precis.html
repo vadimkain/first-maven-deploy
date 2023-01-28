@@ -34,6 +34,116 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 21. Multimodule project</h1>
+    <img src="mvn-21-1.png" width="20%">
+    <p>
+        Проекты принято разбивать на модули, чтобы в дальнейшем разбивать их на отдельные проекты и легко поддреживать.
+        Apache maven поддерживает такую возможность разбивать проекты на модули
+    </p>
+    <p>
+        До этого разрабатывали на <span style="color: green">first-maven jar</span> и говорили, что все наши POMки по
+        умолчанию наследуются от Super POM. Следовательно, тут работают правила наследования. Мы можем развивать
+        возможность наследования в POMках и отсюда приходим к <b>multimodule projects</b>.
+    </p>
+    <p>
+        Т.е. используя наследование
+        в наших проектах через модули. Поэтому у нас все так же есть super Pom, но если хотим дальше наследоваться,
+        то должны использовать packaging-type: pom. Т.е. другими словами говоря - у нас <b>не может быть</b> какого-то
+        кода в нашем проекте от которого наследуются другие проекты.
+    </p>
+    <img src="mvn-21-2.png" width="60%">
+    <p>
+        На примере у нас есть <span style="color: orange">Parent POM</span>, который по умолчанию наследуется от
+        <span style="color: dodgerblue">Super POM</span> и от неё наследуются три других проекта:
+        <span style="color: green">database JAR</span> (собирается в jar),
+        <span style="color: green;">service JAR</span> и <span style="color: orange">front-parent POM</span> (имеет
+        packaging-type: pom. Потому что только в случае pom разрешено другим проектам наследоваться от неё).
+        Следовательно
+        <span style="color: green;">web WAR</span> и <span style="color: green;">desktop JAR</span> наследуются от
+        <span style="color: orange">front-parent POM</span>.
+    </p>
+    <p>
+        Поэтому всё что у нас есть в <span style="color: green;">web WAR</span> - всё это описано в POM проекта + то что
+        досталось по наследованию от <span style="color: orange">front-parent POM</span> + то, что достатолсь от
+        <span style="color: orange">Parent POM</span> и <span style="color: dodgerblue">Super POM</span>.
+    </p>
+    <h2>Создадим multimodule project на примере такой структуры</h2>
+    <img src="mvn-21-3.png" width="60%">
+    <p>
+        По сути, просто возьмем простую структуру слоистого приложения и представим каждый из слоев в виде отдельного
+        модуля, которые собираются в JAR, JAR и WAR.
+    </p>
+    <p>
+        Для этого в проекте создаём модуль maven. После того как создали первый модуль, в дочернем POM видна секция
+        <code>&lt;parent>&lt;/parent></code>. Эта секция говорит о том, от какого модуля мы наследуемся. В данном
+        случае наследуемся от first-maven:com.dmdev
+    </p>
+    <pre>
+        &lt;parent>
+            &lt;groupId>com.kainv&lt;/groupId>
+            &lt;artifactId>first-maven&lt;/artifactId>
+            &lt;version>1.0-SNAPSHOT&lt;/version>
+        &lt;/parent>
+
+         &lt;artifactId>database&lt;/artifactId>
+    </pre>
+    <p>
+        По умолчанию мы наследуем groupId и version базового модуля. В свою очередь, first-maven появилась своя секция,
+        которая называется <code>&lt;modules>&lt;/modules></code>, где описываются все модули, которые наследуются от
+        first-maven. Т.е., для кого first-maven является родителем. Это все изменения в POM, которые связаны с
+        наследованием.
+    </p>
+    <pre>
+        &lt;modules>
+            &lt;module>database&lt;/module>
+        &lt;/modules>
+    </pre>
+    <p>
+        Создадим <b>service</b>:
+    </p>
+    <img src="mvn-21-4.png" width="20%">
+    <p>После этого в first maven pom.xml видим:</p>
+    <pre>
+        &lt;name>first-maven&lt;/name>
+        &lt;modules>
+            &lt;module>database&lt;/module>
+            &lt;module>service&lt;/module>
+        &lt;/modules>
+    </pre>
+    <p>
+        В service pom.xml видим то же самое что и в database pom.xml:
+    </p>
+    <pre>
+        &lt;parent>
+            &lt;groupId>com.kainv&lt;/groupId>
+            &lt;artifactId>first-maven&lt;/artifactId>
+            &lt;version>1.0-SNAPSHOT&lt;/version>
+        &lt;/parent>
+
+        &lt;artifactId>service&lt;/artifactId>
+    </pre>
+    <p>
+        Выполним фазу <b>compile</b> для first-maven видим, что сбилдились все модули со своим packaging type:
+    </p>
+    <img src="mvn-21-5.png" width="60%">
+    <p>
+        Так же создадим web WAR. Получим все тоже самое. Но устанавливаем war в
+        <code>&lt;packaging>war&lt;/packaging></code>. Помимо этого создаём модуль web как в Maven 15.
+    </p>
+    <img src="mvn-21-6.png" width="25%">
+    <p>
+        Из artifacts убираем first-maven
+    </p>
+    <img src="mvn-21-7.png" width="60%">
+    <p>
+        Можно так же убрать src из first-maven, но этого делать не буду, т.к. здесь находится precis.html с конспектами.
+    </p>
+    <p>
+        Теперь, если выполнить <code>mvn compile</code>, то увидим, что все четыре модуля сбилдились:
+    </p>
+    <img src="mvn-21-8.png" width="60%">
+</article>
+<article>
     <h1>Maven. 20. Site Lifecycle. Jacoco plugin</h1>
     <img src="mvn-11-1.png" width="60%">
     <p>
