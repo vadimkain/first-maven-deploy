@@ -116,13 +116,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <!-- Конфигурируем плагин-->
-                <configuration>
-                    <!-- Устанавливаем версию исходников -->
-                    <source>15</source>
-                    <!-- И компилируем в 19 версию java. По умолчанию 1.7-->
-                    <!-- Теперь после билда мавена можно в плагин классах можно использовать фичи 19й java-->
-                    <target>19</target>
-                </configuration>
+<!--                <configuration>-->
+<!--                    &lt;!&ndash; Устанавливаем версию исходников &ndash;&gt;-->
+<!--                    <source>15</source>-->
+<!--                    &lt;!&ndash; И компилируем в 19 версию java. По умолчанию 1.7&ndash;&gt;-->
+<!--                    &lt;!&ndash; Теперь после билда мавена можно в плагин классах можно использовать фичи 19й java&ndash;&gt;-->
+<!--                    <target>19</target>-->
+<!--                </configuration>-->
                 <executions>
                     <execution>
                         <goals>
@@ -148,28 +148,57 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.1</version>
             </plugin>
-            <!-- Переопределяем плагин install на более новую версию -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>3.0.0-M1</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.1.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.6</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-jacoco-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
 
-    <distributionManagement>
-        <!-- Указываем удалённый репозиторий для snapshot версий -->
-        <snapshotRepository>
-            <!-- Указываем id удалённого репозитория -->
-            <id>nexus</id>
-            <!-- Указываем url удалённого snapshot репозитория -->
-            <url>http://localhost:9000/repository/maven-snapshots/</url>
-        </snapshotRepository>
-        <!-- Указываем удалённый репозиторий для релизных версий -->
-        <repository>
-            <id>nexus</id>
-            <url>http://localhost:9000/repository/maven-releases/</url>
-        </repository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        &lt;!&ndash; Указываем удалённый репозиторий для snapshot версий &ndash;&gt;-->
+<!--        <snapshotRepository>-->
+<!--            &lt;!&ndash; Указываем id удалённого репозитория &ndash;&gt;-->
+<!--            <id>nexus</id>-->
+<!--            &lt;!&ndash; Указываем url удалённого snapshot репозитория &ndash;&gt;-->
+<!--            <url>http://localhost:9000/repository/maven-snapshots/</url>-->
+<!--        </snapshotRepository>-->
+<!--        &lt;!&ndash; Указываем удалённый репозиторий для релизных версий &ndash;&gt;-->
+<!--        <repository>-->
+<!--            <id>nexus</id>-->
+<!--            <url>http://localhost:9000/repository/maven-releases/</url>-->
+<!--        </repository>-->
+<!--    </distributionManagement>-->
 </project>

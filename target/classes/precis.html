@@ -34,6 +34,105 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 20. Site Lifecycle. Jacoco plugin</h1>
+    <img src="mvn-11-1.png" width="60%">
+    <p>
+        <b>Site lifecycle</b> содержит лишь одну основную фазу - это site. Она занимается тем, что генерирует нам
+        отчёты и документацию по нашему проекту. Например, можно сделать документацию по всем классам в проекте,
+        можно сформировать отчёты о пройденных и не пройденных тестах в красивом виде.
+    </p>
+    <p>
+        Переопределим плагины на более новые версии.
+    </p>
+    <pre>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-site-plugin&lt;/artifactId>
+            &lt;version>3.9.1&lt;/version>
+        &lt;/plugin>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-project-info-reports-plugin&lt;/artifactId>
+            &lt;version>3.1.1&lt;/version>
+        &lt;/plugin>
+    </pre>
+    <p>
+        Все, что нам надо - это запустить фазу site. Только с фазой site связана goal. После того как запустим site -
+        в директории target появится директория site. В любую из них можем перейти и посмотреть какой отчёт
+        сформировался.
+    </p>
+    <img src="mvn-20-2.png" width="20%">
+    <p>
+        Сформируем документации на основании тестов. Для этого воспользуемся плагином Jacoco
+    </p>
+    <pre>
+        &lt;plugin>
+            &lt;groupId>org.jacoco&lt;/groupId>
+            &lt;artifactId>jacoco-maven-plugin&lt;/artifactId>
+            &lt;version>0.8.6&lt;/version>
+            &lt;executions>
+                &lt;execution>
+                    &lt;id>prepare-agent&lt;/id>
+                    &lt;goals>
+                        &lt;goal>prepare-agent&lt;/goal>
+                    &lt;/goals>
+                &lt;/execution>
+                &lt;execution>
+                    &lt;id>generate-jacoco-report&lt;/id>
+                    &lt;goals>
+                        &lt;goal>report&lt;/goal>
+                    &lt;/goals>
+                    &lt;phase>prepare-package&lt;/phase>
+                &lt;/execution>
+            &lt;/executions>
+        &lt;/plugin>
+    </pre>
+    <p>
+        Запустим фазу package (идёт после test)
+    </p>
+</article>
+<article>
+    <h1>Maven. 19. Default Lifecycle. Deploy phase. Nexus</h1>
+    <img src="mvn-11-1.png" width="60%">
+    <p>
+        После фазы install идёт фаза deploy, который занимается. ОН тем, что берёт директорию из фазы install и пушит
+        их в удалённый репозиторий, который укажем. По дефолту ничего не указано.
+    </p>
+    <p>
+        Популярный удалённый репозиторий для языка Java является nexus. Nexus используется не только как удалённый
+        репозиторий, он так же используется как кэщ зависимостей для компаний потому что если есть какой-то локальный
+        репозиторий одного сотрудника, то этих локальных репозиториев может быть несколько. И все они будут обращаться
+        к Nexus, а он в свою очередь в repo maven. Это своего рода излишние траты трафика. Потому что мы можем все
+        необходимые зависимости для проектов сохранить на компьютере компании в удалённый репозиторий Nexus и уже к нему
+        обращаться. Если там не будет каких-то зависимостей - nexus их подтянет из удалённого репозитория maven и
+        сохранит их у себя.
+    </p>
+    <img src="mvn-19-2.png" width="60%">
+    <p>
+        <b>Поднимать nexus не будем</b>, но с имитируем подключение к нему. Делаем это в корневом тэге
+        <code>&lt;project>&lt;/project></code>
+    </p>
+    <pre>
+        &lt;project>
+            [...]
+            &lt;distributionManagement>
+                &lt;!-- Указываем удалённый репозиторий для snapshot версий -->
+                &lt;snapshotRepository>
+                    &lt;!-- Указываем id удалённого репозитория -->
+                    &lt;id>nexus&lt;/id>
+                    &lt;!-- Указываем url удалённого snapshot репозитория -->
+                    &lt;url>http://localhost:9000/repository/maven-snapshots/&lt;/url>
+                &lt;/snapshotRepository>
+                &lt;!-- Указываем удалённый репозиторий для релизных версий -->
+                &lt;repository>
+                    &lt;id>nexus&lt;/id>
+                    &lt;url>http://localhost:9000/repository/maven-releases/&lt;/url>
+                &lt;/repository>
+            &lt;/distributionManagement>
+        &lt;/project>
+    </pre>
+</article>
+<article>
     <h1>Maven. 18. Default Lifecycle. Install phase</h1>
     <p>
         После того, как отработали все пункты до verify успешно - можно поделиться зависимостью и сохранить её в
@@ -49,6 +148,28 @@
     <img src="mvn-8-1.png" alt="" width="70%">
     <p>
         Запустим фазу install: <code>mvn install</code>
+    </p>
+    <img src="mvn-18-2.png" width="100%">
+    <p>
+        Видим, что вместе с artifact выгружается его и pom.xml для того чтобы подхватывали именно транзитивные
+        зависимости, которые завязаны на наш ROOT.war. Без этой pom мы бы не знали какие транзитивные зависимости
+        нужны для нашего проекта ROOT.war.
+    </p>
+    <p>
+        Когда используем какие-то дефолтные плагины, которые и так уже есть (те, что достались из super pom), то
+        правила хорошего тона говорит о том, что должны переопределить их потому что зачастую используются старые
+        версии. Например, в случае с install плагином - используется версия 2.4. Переопределим этот плагин:
+    </p>
+    <pre>
+        &lt;!-- Переопределяем плагин install на более новую версию -->
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-install-plugin&lt;/artifactId>
+            &lt;version>3.0.0-M1&lt;/version>
+        &lt;/plugin>
+    </pre>
+    <p>
+        Следует смотреть актуальную версию плагинов на официальном сайте maven на вкладке dependency information.
     </p>
 </article>
 <article>

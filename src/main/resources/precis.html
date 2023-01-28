@@ -34,6 +34,65 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 20. Site Lifecycle. Jacoco plugin</h1>
+    <img src="mvn-11-1.png" width="60%">
+    <p>
+        <b>Site lifecycle</b> содержит лишь одну основную фазу - это site. Она занимается тем, что генерирует нам
+        отчёты и документацию по нашему проекту. Например, можно сделать документацию по всем классам в проекте,
+        можно сформировать отчёты о пройденных и не пройденных тестах в красивом виде.
+    </p>
+    <p>
+        Переопределим плагины на более новые версии.
+    </p>
+    <pre>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-site-plugin&lt;/artifactId>
+            &lt;version>3.9.1&lt;/version>
+        &lt;/plugin>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-project-info-reports-plugin&lt;/artifactId>
+            &lt;version>3.1.1&lt;/version>
+        &lt;/plugin>
+    </pre>
+    <p>
+        Все, что нам надо - это запустить фазу site. Только с фазой site связана goal. После того как запустим site -
+        в директории target появится директория site. В любую из них можем перейти и посмотреть какой отчёт
+        сформировался.
+    </p>
+    <img src="mvn-20-2.png" width="20%">
+    <p>
+        Сформируем документации на основании тестов. Для этого воспользуемся плагином Jacoco
+    </p>
+    <pre>
+        &lt;plugin>
+            &lt;groupId>org.jacoco&lt;/groupId>
+            &lt;artifactId>jacoco-maven-plugin&lt;/artifactId>
+            &lt;version>0.8.6&lt;/version>
+            &lt;executions>
+                &lt;execution>
+                    &lt;id>prepare-agent&lt;/id>
+                    &lt;goals>
+                        &lt;goal>prepare-agent&lt;/goal>
+                    &lt;/goals>
+                &lt;/execution>
+                &lt;execution>
+                    &lt;id>generate-jacoco-report&lt;/id>
+                    &lt;goals>
+                        &lt;goal>report&lt;/goal>
+                    &lt;/goals>
+                    &lt;phase>prepare-package&lt;/phase>
+                &lt;/execution>
+            &lt;/executions>
+        &lt;/plugin>
+    </pre>
+    <p>
+        Запустим фазу package (идёт после test). Jacoco сформирует отчёт и поместит его в target/site/jacoco:
+    </p>
+    <img src="mvn-20-3.png" width="20%">
+</article>
+<article>
     <h1>Maven. 19. Default Lifecycle. Deploy phase. Nexus</h1>
     <img src="mvn-11-1.png" width="60%">
     <p>
