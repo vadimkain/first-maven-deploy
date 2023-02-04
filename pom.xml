@@ -20,190 +20,193 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <spring.version>5.1.7.RELEASE</spring.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>5.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>pgjdbc-osgi-test</artifactId>
-            <version>42.3.8</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
-            <scope>runtime</scope>
-            <!-- <optional>true</optional>-->
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>5.0.5.RELEASE</version>
-            <!-- Игнорируем зависимости для решения транзитивной проблемы. См. Maven 10-->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-beans</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>5.1.7.RELEASE</version>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>5.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>pgjdbc-osgi-test</artifactId>
+                <version>42.3.8</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.23</version>
+                <scope>runtime</scope>
+                <!-- <optional>true</optional>-->
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+                <!-- Игнорируем зависимости для решения транзитивной проблемы. См. Maven 10-->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
-        <!-- Результат упаковки будет называться как ROOT. См. Maven 15 -->
-        <finalName>ROOT</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <executions>
-                    <!-- Привязываем goal'ы на определенной фазе -->
-                    <execution>
-                        <!-- Оба goal будут привязаны к одной фазе -->
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <!-- <phase>test</phase>-->
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-                <!-- Этот тег позволяет вызывать goal'ы, которые укажем -->
-                <executions>
-                    <!-- Указываем goal, который нужно выполнить -->
-                    <execution>
-                        <!-- Указыаем id-->
-                        <id>copy-docker-files</id>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <!-- Привязываем фазу к goal'у (указываем фазу) -->
-                        <phase>validate</phase>
-                        <!-- Указываем, что именно будем конфигурировать для goal -->
-                        <configuration>
-                            <!-- Указываем, в какую директорию выгружаем ресурсы -->
-                            <outputDirectory>${project.basedir}/target</outputDirectory>
-                            <!-- Указываем ресурсы, которые хотим скопировать -->
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/docker</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <!-- Конфигурируем плагин-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash; Устанавливаем версию исходников &ndash;&gt;-->
-<!--                    <source>15</source>-->
-<!--                    &lt;!&ndash; И компилируем в 19 версию java. По умолчанию 1.7&ndash;&gt;-->
-<!--                    &lt;!&ndash; Теперь после билда мавена можно в плагин классах можно использовать фичи 19й java&ndash;&gt;-->
-<!--                    <target>19</target>-->
-<!--                </configuration>-->
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <phase>validate</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Запуск тестов происходит через surefire плагина-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <!-- В этом также конфигурируем плагины, т.е. можем переопределять поля-->
-                <configuration>
-                    <!-- <skipTests>true</skipTests>-->
-                </configuration>
-            </plugin>
-            <!-- Для того чтобы работал war плагин-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>3.0.0-M1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.1.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.6</version>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-jacoco-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                    <executions>
+                        <!-- Привязываем goal'ы на определенной фазе -->
+                        <execution>
+                            <!-- Оба goal будут привязаны к одной фазе -->
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <!-- <phase>test</phase>-->
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <!-- Этот тег позволяет вызывать goal'ы, которые укажем -->
+                    <executions>
+                        <!-- Указываем goal, который нужно выполнить -->
+                        <execution>
+                            <!-- Указыаем id-->
+                            <id>copy-docker-files</id>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <!-- Привязываем фазу к goal'у (указываем фазу) -->
+                            <phase>validate</phase>
+                            <!-- Указываем, что именно будем конфигурировать для goal -->
+                            <configuration>
+                                <!-- Указываем, в какую директорию выгружаем ресурсы -->
+                                <outputDirectory>${project.basedir}/target</outputDirectory>
+                                <!-- Указываем ресурсы, которые хотим скопировать -->
+                                <resources>
+                                    <resource>
+                                        <directory>${project.basedir}/docker</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <!-- Конфигурируем плагин-->
+                    <configuration>
+                        <!-- Устанавливаем версию исходников -->
+                        <source>15</source>
+                        <!-- И компилируем в 19 версию java. По умолчанию 1.7-->
+                        <!-- Теперь после билда мавена можно в плагин классах можно использовать фичи 19й java-->
+                        <target>19</target>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <phase>validate</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- Запуск тестов происходит через surefire плагина-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                    <!-- В этом также конфигурируем плагины, т.е. можем переопределять поля-->
+                    <configuration>
+                        <!-- <skipTests>true</skipTests>-->
+                    </configuration>
+                </plugin>
+                <!-- Для того чтобы работал war плагин-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.9.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.6</version>
+                    <executions>
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>generate-jacoco-report</id>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                            <phase>prepare-package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 
-<!--    <distributionManagement>-->
-<!--        &lt;!&ndash; Указываем удалённый репозиторий для snapshot версий &ndash;&gt;-->
-<!--        <snapshotRepository>-->
-<!--            &lt;!&ndash; Указываем id удалённого репозитория &ndash;&gt;-->
-<!--            <id>nexus</id>-->
-<!--            &lt;!&ndash; Указываем url удалённого snapshot репозитория &ndash;&gt;-->
-<!--            <url>http://localhost:9000/repository/maven-snapshots/</url>-->
-<!--        </snapshotRepository>-->
-<!--        &lt;!&ndash; Указываем удалённый репозиторий для релизных версий &ndash;&gt;-->
-<!--        <repository>-->
-<!--            <id>nexus</id>-->
-<!--            <url>http://localhost:9000/repository/maven-releases/</url>-->
-<!--        </repository>-->
-<!--    </distributionManagement>-->
+    <!--    <distributionManagement>-->
+    <!--        &lt;!&ndash; Указываем удалённый репозиторий для snapshot версий &ndash;&gt;-->
+    <!--        <snapshotRepository>-->
+    <!--            &lt;!&ndash; Указываем id удалённого репозитория &ndash;&gt;-->
+    <!--            <id>nexus</id>-->
+    <!--            &lt;!&ndash; Указываем url удалённого snapshot репозитория &ndash;&gt;-->
+    <!--            <url>http://localhost:9000/repository/maven-snapshots/</url>-->
+    <!--        </snapshotRepository>-->
+    <!--        &lt;!&ndash; Указываем удалённый репозиторий для релизных версий &ndash;&gt;-->
+    <!--        <repository>-->
+    <!--            <id>nexus</id>-->
+    <!--            <url>http://localhost:9000/repository/maven-releases/</url>-->
+    <!--        </repository>-->
+    <!--    </distributionManagement>-->
 </project>

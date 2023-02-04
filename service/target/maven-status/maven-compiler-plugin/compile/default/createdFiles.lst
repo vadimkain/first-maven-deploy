@@ -1,1 +1,3 @@
 com\kainv\App.class
+com\kainv\service\UserService.class
+com\kainv\dto\UserDto.class

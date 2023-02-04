@@ -34,6 +34,157 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 22. PluginManagement and DependencyManagement</h1>
+    <p>
+        Пойдём в parent pom и поправим пару нюансов связанные с dependencies зависимостями. Все зависимости с
+        родительской pom достаются наследуемым модулям. Это не совсем правильно. В принципе, в parent'овом pom следует
+        писать не <code>&lt;dependencies>&lt;/dependencies></code>, a
+        <code>&lt;dependencyManagement>&lt;/dependencyManagement></code>. Т.е. в этой секции указываем все зависимости
+        которые используются в проекте, могут использоваться в базовых модулях, но они подтягиваются до тех пор, пока
+        не укажем в <code>&lt;dependency>&lt;/dependency></code> тэге. В
+        <code>&lt;dependencyManagement>&lt;/dependencyManagement></code> указываем все наши зависимости и их версии
+        которые
+        могут использоваться в наследуемых модулях. Это <b>очень важный нюанс</b> потому что на практике очень большая
+        проблема с версионностью: когда один модуль использует одну версию, другой другую и получается проблема с
+        транзитивными зависимостями и несовместимостями версий.
+    </p>
+    <p>
+        Следовательно, всю <code>&lt;dependencies>&lt;/dependencies></code> секцию переносим в
+        <code>&lt;dependencyManagement>&lt;/dependencyManagement></code>
+    </p>
+    <p>
+        Теперь в настоящее время никто из модулей не зависит никаких зависимостей. Т.е. в них не будет тех зависимостей,
+        что есть в родительском pom. Что на самом деле правильно, потому что к примеру наш jakarta servlet нужен только
+        для модуля web. Туда его и перетащим:
+    </p>
+    <pre>
+        &lt;dependency>
+            &lt;groupId>jakarta.servlet&lt;/groupId>
+            &lt;artifactId>jakarta.servlet-api&lt;/artifactId>
+        &lt;/dependency>
+    </pre>
+    <p>
+        Правило хорошего тона говорит, что не нужно указывать версию и scope в наследуемом pom поскольку в
+        родительском уже указана версия и scope в <code>&lt;dependencyManagement>&lt;/dependencyManagement></code>.
+        Т.е., <b>один раз настроили</b> в родительском pom и затем используем только artifactId & groupId для
+        подключения
+        в зависимых модулях. То же самое и с тестами.
+    </p>
+    <p>
+        Мы также использовали очень много плагинов. Более того, использовали final-name. Поэтому если соберём
+        (выполним <code>mvn package</code>) first-maven, то все artifact зависимых модулей будут в виде ROOT с
+        названием ROOT. Это не совсем то, что мы хотим. Появятся директории target во всех модулях потому что это все
+        отдельные проекты. Поэтому в first-maven pom убираем <code>&lt;>ROOT&lt;/finalName></code> чтобы каждый
+        таргет назывался по названию модулю.
+    </p>
+    <p>
+        Далее, у нас очень много плагинов. Не во всех модулях будем использовать все плагины, которые определили поэтому
+        вводится такое понятие как <code>&lt;pluginManagement>&lt;/pluginManagement></code> и она работает как
+        <code>&lt;dependencyManagement>&lt;/dependencyManagement></code> только для плагинов. Соответственно,
+        секцию плагинов переносим в секцию <code>&lt;pluginManagement>&lt;/pluginManagement></code>.
+    </p>
+    <p>
+        Выполним <code>mvn clean</code> & <code>mvn package</code> и увидим, что используем одни версии плагинов для
+        наследников.
+    </p>
+    <p>
+        Теперь можем зайти в модуль web, создать сервлет.
+    </p>
+    <p>
+        Сейчас, т.к. для jakarta указан scope как provided, то не увидим в директории target директорию lib с
+        зависимостью jakarta servlets. Но если в web pom укажем <code>&lt;scope>compile&lt;/scope></code>, то получим
+        директорию lib, в которой увидим зависимость:
+    </p>
+    <table>
+        <tr>
+            <td><img src="mvn-22-1.png" alt="" width="100%"></td>
+            <td><img src="mvn-22-2.png" alt="" width="100%"></td>
+        </tr>
+    </table>
+    <p>
+        Далее, обычно все что совпадает - выносят в <code>&lt;properties>&lt;/properties</code> и используют
+        expression language. Например, для groupId спринга у нас должны быть одинаковые версии. Поэтому, вынесем
+        в пропертисы и воспользуемся expression language:
+    </p>
+    <pre>
+        &lt;project>
+            ...
+            &lt;properties>
+                &lt;project.build.sourceEncoding>UTF-8&lt;/project.build.sourceEncoding>
+                &lt;maven.compiler.source>1.7&lt;/maven.compiler.source>
+                &lt;maven.compiler.target>1.7&lt;/maven.compiler.target>
+                &lt;spring.version>5.1.7.RELEASE&lt;/spring.version>
+            &lt;/properties>
+        &lt;/project>
+    </pre>
+    <pre>
+        &lt;dependency>
+            &lt;groupId>org.springframework&lt;/groupId>
+            &lt;artifactId>spring-webmvc&lt;/artifactId>
+            &lt;version>${spring.version}&lt;/version>
+            &lt;!-- Игнорируем зависимости для решения транзитивной проблемы. См. Maven 10-->
+            &lt;exclusions>
+                &lt;exclusion>
+                    &lt;groupId>org.springframework&lt;/groupId>
+                        &lt;artifactId>spring-beans&lt;/artifactId>
+                &lt;/exclusion>
+            &lt;/exclusions>
+        &lt;/dependency>
+        &lt;dependency>
+            &lt;groupId>org.springframework&lt;/groupId>
+            &lt;artifactId>spring-aop&lt;/artifactId>
+            &lt;version>${spring.version}&lt;/version>
+        &lt;/dependency>
+    </pre>
+    <p>
+        Properties, которые мы ввели - также наследуются.
+    </p>
+    <p>
+        Теперь, в модуле Service осталось добавить какой-нибудь класс-сервис и на database какой-нибудь класс-dao. И
+        сделать зависимость между модулями соответсвующую.
+    </p>
+    <p>
+        После того, как сделали необходимые действия и хотим связать модули - необходимо зайти в pom и указать
+        зависимости. В модуле service сделаем ссылку на модуль database. Для этого должны подключить зависимость
+        в pom service:
+    </p>
+    <pre>
+        &lt;dependency>
+            &lt;groupId>com.kainv&lt;/groupId>
+            &lt;artifactId>database&lt;/artifactId>
+            &lt;version>1.0-SNAPSHOT&lt;/version>
+        &lt;/dependency>
+    </pre>
+    <p>
+        И так же для модуля web:
+    </p>
+    <pre>
+        &lt;dependency>
+            &lt;groupId>com.kainv&lt;/groupId>
+            &lt;artifactId>service&lt;/artifactId>
+            &lt;version>1.0-SNAPSHOT&lt;/version>
+        &lt;/dependency>
+    </pre>
+    <p>
+        Теперь на сервлете есть доступ к уровню сервисов.
+    </p>
+    <p>
+        Сделаем <code>mvn clean</code> & <code>mvn package</code>. И теперь если зайдём в web->target, то увидим все
+        наши зависимые модули:
+    </p>
+    <img src="mvn-22-3.png" alt="" width="30%">
+    <p>
+        Таким образом, можно общаться между нашими модулями в maven проекте как будто бы это сторонние зависимости.
+        На практике часто используется <b>моно-репозиторий</b>, т.е. когда есть один единственный репозиторий (ROOT-овый
+        проект) и здесь множество модулей, которые общаются друг с другом.
+    </p>
+    <p>
+        Так же часто встречается в maven проектах когда самый ROOT-овый pom выносится в отдельный модуль (его
+        называют parent) для того чтобы все зависимости вынести туда (вместо того чтобы держать отдельную POMку в
+        ROOTовой директории нашего first-maven).
+    </p>
+</article>
+<article>
     <h1>Maven. 21. Multimodule project</h1>
     <img src="mvn-21-1.png" width="20%">
     <p>
