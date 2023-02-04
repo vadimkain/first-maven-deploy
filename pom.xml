@@ -71,6 +71,16 @@
     </dependencyManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <!--
+                Этот тег как раз таки нужен чтобы maven поставлял пропертисы в expression language, которые нашёл в
+                директории resources
+                -->
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>

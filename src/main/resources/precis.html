@@ -34,6 +34,67 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 23. Properties. Resource Filtering</h1>
+    <p>
+        Углубимся в понятие переменных и разберёмся что такое Filtering. Есть пять разных пропертисов, к которым
+        можем обращаться:
+    </p>
+    <ol>
+        <li>
+            <b>project</b> project.* project.groupdId и т.д.
+        </li>
+        <li>
+            <b>settings</b>
+        </li>
+        <li>
+            <b>пользовательские properties</b> - те, которые указали в теге <code>&lt;properties>&lt;/properties></code>
+        </li>
+        <li>
+            <b>env</b> - environment variables (env.JAVA_HOME)
+        </li>
+        <li>
+            <b>System</b> системные настройки (System.getProperty -D)
+        </li>
+    </ol>
+    <p>
+        Что же такое Filtering. Это постановка этих пропертисов, значений в статические, ресурсные файлы. Например,
+        у нас в database->src->main->resources есть пропертис файл:
+    </p>
+    <img src="mvn-23-1.png" alt="" width="60%">
+    <p>
+        Теперь, если выполним <code>mvn package</code>, то в результирующей properties файле которая находится в target
+        не будут установлены значения через expression language. Это потому что maven не отслеживает эти ресурсы, пока
+        ему явно не скажем. Следственно, это можем сделать в каждой из pom.xml или сделаем в родительской pom.
+    </p>
+    <p>
+        В родительской pom указываем все ресурсы (он есть как для testResources, так и для main resources:
+    </p>
+    <pre>
+            &lt;build>
+                &lt;resources>
+                    &lt;resource>
+                        &lt;directory>${project.basedir}/src/main/resources&lt;/directory>
+                &lt;!-- 
+                Этот тег как раз таки нужен чтобы maven поставлял пропертисы в expression language, которые нашёл в 
+                директории resources
+                -->
+                        &lt;filtering>true&lt;/filtering>
+                    &lt;/resource>
+                &lt;/resources>
+            &lt;/build>
+    </pre>
+    <p>
+        Выполним <code>mvn clean</code> & <code>mvn resources:resources</code>. Заходим в target и смотрим
+        application.properties.
+    </p>
+    <img src="mvn-23-2.png" alt="" width="70%">
+    <p>
+        В результирующем пропертис файле видим то, что подставил maven. Таких resources можем устанавливать сколько
+        угодно. Например, можем обратиться к src/main/java, чтобы выполнил фильтеринг ресурсов из этой директории, то
+        он расценил бы их как статические ресурсы.
+    </p>
+</article>
+<article>
     <h1>Maven. 22. PluginManagement and DependencyManagement</h1>
     <p>
         Пойдём в parent pom и поправим пару нюансов связанные с dependencies зависимостями. Все зависимости с
