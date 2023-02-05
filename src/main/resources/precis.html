@@ -34,6 +34,127 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 24. Build Profiles</h1>
+    <p>
+        Это ещё одна секция в pom xml которая позволяет в зависимости от условий изменять существующую конфигурацию
+        pom xml и переопределять какие-то свойства.
+    </p>
+    <p>
+        Например, после секции <code>&lt;build>&lt;/build></code> напишем <code>&lt;profiles>&lt;/profiles></code> и
+        в <code>&lt;profile>&lt;/profile></code> можем указывать разное кол-во свойств. Например, id (т.е. в зависимости
+        от того, какой env, будем ли разворачивать приложение локально либо на продакшене - будем какие-то значения
+        переопределять для pom.xml.
+    </p>
+    <pre>
+    &lt;profiles>
+        &lt;profile>
+            &lt;id>prod&lt;/id>
+            &lt;!-- Переопределяем пропертис с тега properties -->
+            &lt;properties>
+                &lt;app.env>prod&lt;/app.env>
+                &lt;example>test-test&lt;/example>
+            &lt;/properties>
+            &lt;!-- Переопределяем секцию build -->
+            &lt;build>
+                &lt;plugins>
+                    &lt;plugin>
+                        &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                        &lt;artifactId>maven-compiler-plugin&lt;/artifactId>
+                        &lt;version>3.8.1&lt;/version>
+                        &lt;configuration>
+                            &lt;debug>false&lt;/debug>
+                            &lt;!-- Компилятор подготавливает оптимизации когда отправляем на прод -->
+                            &lt;optimize>true&lt;/optimize>
+                        &lt;/configuration>
+                    &lt;/plugin>
+                &lt;/plugins>
+            &lt;/build>
+        &lt;/profile>
+    &lt;/profiles>
+    </pre>
+    <p>
+        Т.е. получается, что в profile-ах есть ещё какой-то xml, который просто берётся отсюда и вставляется в нашу
+        ROOT-овую pom.xml и переопределяются все эти значения.
+    </p>
+    <p>
+        Чтобы активировать profile нужно использовать флаг <code>-P</code> и перечислить id. Например:
+        <code>mvn compile -Pprod</code>, <code>mvn compile -Pprod,qa</code>. Также передадим флаг <code>-X</code>,
+        который означает <i>debug</i> - он позволяет видеть все промежуточные данные.
+    </p>
+    <p>
+        Выполним <code>mvn compile -Pprod -X</code> и <code>mvn compile -X</code>. Увидим, что все что мы измениили в
+        <code>&lt;profiles>&lt;/profiles></code> - изменилось.
+    </p>
+    <p>
+        Для того чтобы посмотреть какие профайлы активированы сейчас или нет - можем воспользоваться плагином
+        <code>help</code> и его goal <code>active-profiles</code> и он отображает все активные профайлы в текущий
+        момент.
+        Выполним <code>mvn help:active-profiles</code>.
+    </p>
+    <img src="mvn-24-1.png" alt="" width="50%">
+    <p>
+        Видим, что нет никаких профайлов ни в одном из наших модулей. Но если передадим флаг -Pprod
+        <code>mvn help:active-profiles -Pprod</code>:
+    </p>
+    <img src="mvn-24-2.png" alt="" width="50%">
+    <p>
+        Profile`ы можно активировать не только по флагу, но и по специальным параметрам. Для этого есть специальная
+        секция <code>&lt;activation>&lt;/activation></code> и в нём есть пять разных тегов:
+    </p>
+    <ul>
+        <li>
+            <b>&lt;activeByDefault>&lt;/activeByDefault></b> - false по умолчанию, но если установим true, то будет
+            profile будет всегда активен даже если не указываем флаг.
+        </li>
+        <li>
+            <b>&lt;os>&lt;/os></b> - в зависимости от операционной системы активируем profile. За ОС отвечает тэг
+            <code>&lt;family>&lt;/family></code>.
+        </li>
+        <li>
+            <b>&lt;jdk>&lt;/jdk></b> - активировать в зависимости от JDK.
+        </li>
+        <li>
+            <b>&lt;file>&lt;/file></b> - путь к файлу и есть два тега: <code>&lt;exists>&lt;/exists></code>
+            (активировать, если такой файл существует) и <code>&lt;missing>&lt;/missing></code> если такого файла
+            не существует.
+        </li>
+        <li>
+            <b>&lt;property>&lt;/property></b> - имеются ввиду системные пропертисы, которые передаём через
+            <code>-D</code>.
+            <pre>
+                &ltproperty>
+                    &ltname>test.prop&lt/name>
+                    &ltvalue>example&lt/value>
+                &lt/property>
+            </pre>
+            Т.е. если передадим название с названием <i>test.prop</i> и значением <i>example</i>, то profile будет
+            активирован.
+        </li>
+    </ul>
+    <p>
+        Мы можем совмещать специальные параметры:
+    </p>
+    <pre>
+        &ltprofile>
+            ...
+            &ltactivation>
+                &lt;jdk>15&lt;/jdk>
+                &ltfile>
+                    &ltmissing>${basedir}/pom.xml&lt/missing>
+                &lt/file>
+                &ltproperty>
+                    &ltname>test.prop&lt/name>
+                    &ltvalue>example&lt/value>
+                &lt/property>
+            &lt/activation>
+        &lt/profile>
+    </pre>
+    <p>
+        Чтобы профайл активировался - должны выполнится все условия. Так же эти профайлы можно выносить в отдельные
+        xml или определять в settings xml файле, но такое встречается довольно редко.
+    </p>
+</article>
+<article>
     <h1>Maven. 23. Properties. Resource Filtering</h1>
     <p>
         Углубимся в понятие переменных и разберёмся что такое Filtering. Есть пять разных пропертисов, к которым
