@@ -6,9 +6,9 @@
 </head>
 <style>
     body {
-        max-width: 70%;
+        max-width: 80%;
         min-height: 400vh;
-        margin-left: 10%;
+        margin-left: 5%;
         text-align: justify;
         font-family: Arial, sans-serif;
     }
@@ -21,10 +21,16 @@
         margin-bottom: 5%;
     }
 
-    code, pre {
+    pre {
         /*font-size: 15px;*/
+        /*font-weight: bold;*/
+        background: rgba(179, 194, 245, 0.18);
+    }
+
+    code {
+        font-size: 15px;
         font-weight: bold;
-        background: rgba(245, 222, 179, 0.38);
+        background: rgba(179, 194, 245, 0.18);
     }
 
     li {
@@ -33,6 +39,207 @@
     }
 </style>
 <body>
+<article>
+    <h1>Maven. 26. Executable jar with dependencies</h1>
+    <p>
+        Если наше приложение содержит зависимости на другие jar, то они не подтянутся. Потому что нам нужно каким-то
+        образом добавить наши зависимости в CLASSPATH. Для этого в <b>MANIFEST.MF</b> рядом с <code>Main-Class</code>
+        указать <code>Class-Path</code>. Т.е. путь к нашим зависимым jar-кам. Естественно, вручную так делать постоянно
+        не сможем поскольку очень много зависимостей. Поэтому попросим maven помочь нам с этим.
+    </p>
+    <p>
+        Для этого можем сделать два различных варианта подключения зависимостей: первый вариант реализован в таких
+        приложениях как apache tomcat и apache maven (т.е. рядом идёт какая-то директория), второй вариант: создать
+        одну единственную jar со всеми зависимостями внутри неё (т.е. распакованные jar-ки внутри service.jar).
+    </p>
+    <h2>Первый вариант, менее практичный</h2>
+    <p>
+        По сути, устанавливаем <code>Class-Path</code> значение service/target/lib (зависимости для модуля)
+        в результирующий service-version.jar.
+    </p>
+    <pre>
+    &lt;build>
+        &lt;plugins>
+            &lt;plugin>
+                &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                &lt;artifactId>maven-dependency-plugin&lt;/artifactId>
+                &lt;version>3.2.0&lt;/version>
+                &lt;executions>
+                    &lt;execution>
+                        &lt;id>create-lib&lt;/id>
+                        &lt;goals>
+                            &lt;goal>copy-dependencies&lt;/goal>
+                        &lt;/goals>
+                        &lt;phase>prepare-package&lt;/phase>
+                        &lt;configuration>
+                            &lt;outputDirectory>target/lib&lt;/outputDirectory>
+                        &lt;/configuration>
+                    &lt;/execution>
+                &lt;/executions>
+            &lt;/plugin>
+            &lt;plugin>
+                &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                &lt;artifactId>maven-jar-plugin&lt;/artifactId>
+                &lt;version>3.0.2&lt;/version>
+                &lt;configuration>
+                    &lt;!-- Конфигурируем архив -->
+                    &lt;archive>
+                        &lt;!-- Конфигурируем MANIFEST.MF архива -->
+                        &lt;manifest>
+                            &lt;!-- Устанавливаем Class-Path -->
+                            &lt;addClasspath>true&lt;/addClasspath>
+                            &lt;classpathPrefix>lib/&lt;/classpathPrefix>
+                            &lt;!-- Для параметра Main-Class указываем значение -->
+                            &lt;mainClass>com.kainv.AppRunner&lt;/mainClass>
+                        &lt;/manifest>
+                    &lt;/archive>
+                &lt;/configuration>
+            &lt;/plugin>
+        &lt;/plugins>
+    &lt;/build>
+    </pre>
+    <p>
+        Выполним <code>mvn clean package</code> и увидим в результирующем target наши зависимости в lib, а также
+        посмотрим на MANIFEST.MF файл, который сгенерировал мавен:
+    </p>
+    <table>
+        <tr>
+            <td><img src="mvn-26-1.png" width="100%"></td>
+            <td><img src="mvn-26-2.png" width="80%"></td>
+        </tr>
+    </table>
+    <p>
+        Несмотря на то, что подключено две зависимости - в <code>Class-Path</code> манифест подтянулись только те,
+        которые используются (т.е. database). Если было бы ещё что-то, то они были бы перечислены через пробел.
+    </p>
+    <p>
+        Не всегда удобно перетаскивать папку lib с собой. Гораздо проще иметь один единственный jar который executable
+        и который содержит сразу же все зависимости. Поэтому рассмотрим второй вариант, но для него нужен второй плагин.
+    </p>
+    <h2>Второй вариант, более практичный</h2>
+    <p>
+        Для этого нам нужен плагин <b>maven-assembly-plugin</b>:
+    </p>
+    <pre>
+        &lt;!-- Плагин для executable jar with dependencies -->
+            &lt;plugin>
+                &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                &lt;artifactId>maven-assembly-plugin&lt;/artifactId>
+                &lt;version>3.3.0&lt;/version>
+                &lt;executions>
+                    &lt;execution>
+                        &lt;id>single-jar&lt;/id>
+                        &lt;goals>
+                            &lt;goal>single&lt;/goal>
+                        &lt;/goals>
+                        &lt;phase>package&lt;/phase>
+                        &lt;configuration>
+                            &lt;!--
+                            Указываем дескриптор (дескриптор - это конфигурационный файл, в котором описывается,
+                            как распаковывать все зависимости и класть внутри jar. Этот дескриптор уже есть у самого
+                            плагина. (При необходимости читать докумментацию).
+                             -->
+                            &lt;descriptorRefs>jar-with-dependencies&lt;/descriptorRefs>
+                            &lt;!-- Конфигурируем архив -->
+                            &lt;archive>
+                                &lt;!-- Конфигурируем MANIFEST.MF архива -->
+                                &lt;manifest>
+                                    &lt;!-- Для параметра Main-Class указываем значение -->
+                                    &lt;mainClass>com.kainv.AppRunner&lt;/mainClass>
+                                &lt;/manifest>
+                            &lt;/archive>
+                        &lt;/configuration>
+                    &lt;/execution>
+                &lt;/executions>
+            &lt;/plugin>
+    </pre>
+    <p>
+        Выполним <code>mvn clean package</code> и получим два jar файла, один из которых будет вместе с зависимостями
+        в одном jar файле:
+    </p>
+    <img src="mvn-26-3.png" width="30%">
+    <p>
+        Если разархивируем <b>service-1.0-SNAPSHOT-jar-with-dependencies.jar</b>, то увидим, что зависимости подключились
+        как полноценная часть проекта:
+    </p>
+    <img src="mvn-26-4.png" width="30%">
+    <p>
+        <b>Главное понять</b>, что всё завязано на MANIFEST.MF файле, которая хранится в META-INF директории нашего
+        classpath'a.
+    </p>
+</article>
+<article>
+    <h1>Maven. 25. Executable jar</h1>
+    <p>
+        Разберёмся с тем, как запустить приложение собранное при помощи maven. Но для начала напишем класс с методом
+        main, потому что любое приложение запускается именно с этого метода.
+    </p>
+    <p>
+        В модуле service создадим <code>AppRunner.java</code> в котором будет метод main и вывод на консоль "Привет
+        мир".
+        Чтобы запустить такой класс - его нужно скомпилировать, т.е. преобразовать в байт-код. Для этого можем
+        использовать в терминале <code>javac</code> только если пропишем environment variables path. Но вместо того
+        чтобы
+        напрямую использовать эти приложения можем напрямую попросить maven сделать это. Т.е., выполнить
+        <code>mvn compile</code>.
+    </p>
+    <p>
+        После того, как выполнили компиляцию и получили скомпилированный класс можем запустить
+        <code>AppRunner</code>. Для этого надо в консоли воспользоваться приложением java и указать полный путь
+        к <code>AppRunner.java</code>. Т.к. он лежит в target/classes наш класс, следовательно, нам нужно указать
+        путь относительно него. На самом деле <b>так никто не делает</b> потому что приложения большие и собираются в
+        архивы. Чтобы собрать в архив надо выполнить фазу package.
+    </p>
+    <p>
+        Поэтому, в модуле service вызовем <code>mvn package</code> чтобы он собрал нашу jar (не забываем для
+        database зависимости выполнить <code>mvn install</code> чтобы установить его в .m2/repository). После
+        того как собрали jar, чтобы запустить её и чтобы она была <i>executable</i> потому что она сейчас содержит
+        все необходимые классы которые лежат в service, то необходимо использовать все те же команды java, но в этот
+        раз через флаг <code>-jar</code> указываем какую именно jar хотим запустить.
+    </p>
+    <img src="mvn-25-1.png" alt="" width="100%">
+    <p>
+        Получаем проблему - <i>no main manifest attribute</i>. Т.е. для того, чтобы запускать jar-ки необходимо указать
+        в специальном текстовом файле, который называется manifest путь к методу main. Этот файл <b>должен лежать</b>
+        в classpath'e, в директории <b>META-INF</b>. Это зарезервированное название таких директорий и там создаём
+        файл <b>MANIFEST.MF</b>. Это специальный формат, в котором должны указать самый основной параметр - это
+        <code>Main-Class</code>.
+    </p>
+    <img src="mvn-25-2.png" alt="" width="60%">
+    <p>
+        Для того чтобы этот manifest попал в jar файл - нужно воспользоваться maven'ом. Он сам это все сделает,
+        он сам создаст манифест, но перетирает уже существующий и по умолчанию не добавляет <code>Main-Class</code>
+        потому что он не знает какой <code>Main-Class</code> нужно добавить в манифест. Если сейчас сделаем
+        <code>mvn clean package</code> и распакуем jar архив, то увидим, что MANIFEST.MF содержит не ту информацию,
+        которую вводили.
+    </p>
+    <img src="mvn-25-3.png" alt="" width="70%">
+    <p>
+        Так работает maven jar плагин. Следовательно, maven-jar-plugin запускается на фазе package и поэтому идём в
+        pom и переопределяем его:
+    </p>
+    <pre>
+    &lt;build>
+        &lt;plugins>
+            &lt;plugin>
+                &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                &lt;artifactId>maven-jar-plugin&lt;/artifactId>
+                &lt;version>3.0.2&lt;/version>
+                &lt;configuration>
+                    &lt;!-- Конфигурируем архив -->
+                    &lt;archive>
+                        &lt;!-- Конфигурируем MANIFEST.MF архива -->
+                        &lt;manifest>
+                            &lt;!-- Для параметра Main-Class указываем значение -->
+                            &lt;mainClass>com.kainv.AppRunner&lt;/mainClass>
+                        &lt;/manifest>
+                    &lt;/archive>
+                &lt;/configuration>
+            &lt;/plugin>
+        &lt;/plugins>
+    &lt;/build>
+    </pre>
+</article>
 <article>
     <h1>Maven. 24. Build Profiles</h1>
     <p>
