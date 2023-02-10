@@ -40,6 +40,104 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 27. Release plugin</h1>
+    <p>
+        Разберёмся с тем, как делать релизные версии наших проектов.
+    </p>
+    <p>
+        До этого в тэге <code>&lt;version>&lt;/version></code> всегда указывали -SNAPSHOT, что говорит о том, что
+        текущая версия в разработке. Чтобы указать релизную версию - убираем постфикс -SNAPSHOT, выкатываем версию для
+        того чтобы другие разработчики могли подключать её к себе и после этого просто изменяем версию. Для этого нам
+        конечно же <b>нужен</b> будет релиз-плагин.
+    </p>
+    <h2>Рассмотрим как работает Release Plugin</h2>
+    <img src="mvn-27-1.png" width="50%">
+    <p>
+        Когда подключим этот плагин - у него есть несколько goal'ов, два основных из них будем использовать:
+    </p>
+    <ol>
+        <li>
+            <b>release:prepare</b>
+            <br><br>
+            у нас есть версия (1.0.0-SNAPSHOT) и первый шаг, который делаем к этой цели -
+            убираем постфикс -SNAPSHOT и делаем <code>mvn package</code> и проверяем, действительно ли эта релизная
+            версия собирается у нас. Если всё испешно и build - success, то создаём <code>git tag + push</code>. После
+            чего изменяем версию наших POM-мок с префиксом -SNAPSHOT и пушим/коммитим.
+        </li>
+        <li>
+            <b>release:perform</b>
+            <br><br>
+            Эта цель переходит в директорию target проекта и делает <code>git clone</code> того тега, которого сделали
+            на шаге <code>git tag + push</code> в release:prepare. Он клонирует её в папку checkout, мы переходим в
+            папку checkout и делаем <code>mvn deploy</code> (деплоем в удаленный репозиторий, но можно и в локальный).
+        </li>
+    </ol>
+    <h2>Попробуем реализовать это в проекте</h2>
+    <p>
+        Для начала необходимо подключить плагин в родительской POM так, чтобы была видна для всех (т.е. не в
+        <code>&lt;pluginManagement>&lt;/pluginManagement></code>, а в <code>&lt;plugins>&lt;/plugins></code>:
+    </p>
+    <pre>
+        &lt;plugins>
+            &lt;plugin>
+                &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+                &lt;artifactId>maven-release-plugin&lt;/artifactId>
+                &lt;version>3.0.0-M1&lt;/version>
+            &lt;/plugin>
+        &lt;/plugins>
+    </pre>
+    <p>
+        В тэге <code>&lt;configuration>&lt;/configuration></code> есть множество конфигураций. Так, например можем
+        задавать название тэга (<code>&lt;tag/>&lt;tag/></code>) с третьего шага (по умолчанию будет брать наш
+        artifactId-version). Далее, важный момент: когда делаем релиз - все наши зависимости (то что указали в
+        <code>&lt;dependencies>&lt;dependencies></code> и транзитивные зависимости не должны быть -SNAPSHOT. Но если
+        все таки хотим это сделать, то должны использовать тег
+        <code>&lt;allowTimestampedSnapshots>true&lt;/allowTimestampedSnapshots></code>.
+    </p>
+    <p>
+        <b>Далее</b>, т.к. работаем с github, то должны указать URL нашего гита. Т.е., должны указать URL нашего
+        репозитория на гитхабе. Чтобы указать эту конфигурацию, нам необходима новая секция
+        <code>&lt;scm>&lt;/scm></code> (software configuration management) и здесь есть несколько вариантов, которые
+        можем указать:
+    </p>
+    <ul>
+        <li>
+            <b>tag</b>
+        </li>
+        <li>
+            <b>connection</b>
+        </li>
+        <li>
+            <b>developerConnection</b>
+        </li>
+        <li>
+            <b>url</b>
+        </li>
+    </ul>
+    <p>
+        <b>connection</b> & <b>developerConnection</b> - это то, что мы должны указать как путь к удалённому
+        репозиторию на гитхабе. Между ними разница в том, что developerConnection не read-only в отличии от connection и
+        она используется разработчиками.
+    </p>
+    <pre>
+        &lt;scm>
+            &lt;connection>scm:git:git@github.com:vadimkain/first-maven-deploy.git&lt;/connection>
+            &lt;developerConnection>scm:git:git@github.com:vadimkain/first-maven-deploy.git&lt;/developerConnection>
+                    &lt;!-- Указывается ссылка на документацию, но можно и ссылку на репозиторий -->
+            &lt;url>https://github.com/vadimkain/first-maven-deploy&lt;/url>
+        &lt;/scm>
+    </pre>
+    <p>
+        Теперь, чтобы выполнить релиз, необходимо закоммитить все изменения потому что не должно быть изменений, которые
+        не закоммичены в репозитории. После того как закоммитили - можем перейти в maven-release-plugin и выполнить
+        релиз нашего first-maven'a, а т.к. first-maven это родительский проект (от которого наследуются), то мы будем
+        делать автоматически релизы для всех наследников.
+    </p>
+    <p>
+        Вызываем <code>mvn release:prepare</code>
+    </p>
+</article>
+<article>
     <h1>Maven. 26. Executable jar with dependencies</h1>
     <p>
         Если наше приложение содержит зависимости на другие jar, то они не подтянутся. Потому что нам нужно каким-то
