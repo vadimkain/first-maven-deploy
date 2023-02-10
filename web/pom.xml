@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.kainv</groupId>
         <artifactId>first-maven</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <artifactId>web</artifactId>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.kainv</groupId>
             <artifactId>service</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>
