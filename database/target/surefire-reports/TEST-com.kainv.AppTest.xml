@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.kainv.AppTest" time="0.022" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.kainv.AppTest" time="0.023" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="19"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="RU"/>
     <property name="sun.boot.library.path" value="C:\Users\kainv\.jdks\openjdk-19.0.1\bin"/>
-    <property name="sun.java.command" value="C:\Users\kainv\AppData\Local\Temp\surefire2031051105003430947\surefirebooter4254233802039144224.jar C:\Users\kainv\AppData\Local\Temp\surefire2031051105003430947 2023-02-10T23-13-37_678-jvmRun1 surefire8913193252486373439tmp surefire_06670095450382518535tmp"/>
+    <property name="sun.java.command" value="C:\Users\kainv\AppData\Local\Temp\surefire17020152653189101263\surefirebooter4567858389207242413.jar C:\Users\kainv\AppData\Local\Temp\surefire17020152653189101263 2023-02-11T18-56-29_829-jvmRun1 surefire6361958433811069184tmp surefire_05586105981784554135tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\database\target\test-classes;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\database\target\classes;C:\Users\kainv\.m2\repository\junit\junit\3.8.1\junit-3.8.1.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\kainv\AppData\Local\Temp\surefire2031051105003430947\surefirebooter4254233802039144224.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\kainv\AppData\Local\Temp\surefire17020152653189101263\surefirebooter4567858389207242413.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="19.0.1+10-21"/>
@@ -45,6 +45,7 @@
     <property name="localRepository" value="C:\Users\kainv\.m2\repository"/>
     <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\kainv\AppData\Local\Temp\"/>
+    <property name="idea.version" value="2022.3"/>
     <property name="java.version" value="19.0.1"/>
     <property name="user.dir" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\database"/>
     <property name="os.arch" value="amd64"/>
@@ -57,7 +58,6 @@
     <property name="java.vendor" value="Oracle Corporation"/>
     <property name="java.vm.version" value="19.0.1+10-21"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
-    <property name="maven.repo.local" value="C:\Users\kainv\.m2\repository"/>
     <property name="java.class.version" value="63.0"/>
   </properties>
   <testcase name="testApp" classname="com.kainv.AppTest" time="0.007"/>

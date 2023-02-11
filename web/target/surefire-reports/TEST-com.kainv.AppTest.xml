@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.kainv.AppTest" time="0.056" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.kainv.AppTest" time="0.058" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="19"/>
     <property name="sun.cpu.isalist" value="amd64"/>
     <property name="sun.jnu.encoding" value="Cp1251"/>
-    <property name="java.class.path" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\test-classes;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\classes;C:\Users\kainv\.m2\repository\junit\junit\4.13.1\junit-4.13.1.jar;C:\Users\kainv\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\kainv\.m2\repository\jakarta\servlet\jakarta.servlet-api\5.0.0\jakarta.servlet-api-5.0.0.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\service\target\service-1.0.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\database\target\database-1.0.jar;"/>
+    <property name="java.class.path" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\test-classes;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\classes;C:\Users\kainv\.m2\repository\junit\junit\4.13.1\junit-4.13.1.jar;C:\Users\kainv\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\kainv\.m2\repository\jakarta\servlet\jakarta.servlet-api\5.0.0\jakarta.servlet-api-5.0.0.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\service\target\service-1.0-SNAPSHOT.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\database\target\database-1.0-SNAPSHOT.jar;"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="user.variant" value=""/>
@@ -16,9 +16,9 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="RU"/>
     <property name="sun.boot.library.path" value="C:\Users\kainv\.jdks\openjdk-19.0.1\bin"/>
-    <property name="sun.java.command" value="C:\Users\kainv\AppData\Local\Temp\surefire2211034724450374771\surefirebooter5098157527859841976.jar C:\Users\kainv\AppData\Local\Temp\surefire2211034724450374771 2023-02-10T23-13-37_678-jvmRun1 surefire8283327956829120410tmp surefire_214003991775661352598tmp"/>
+    <property name="sun.java.command" value="C:\Users\kainv\AppData\Local\Temp\surefire15076911075819912769\surefirebooter1576257043940934371.jar C:\Users\kainv\AppData\Local\Temp\surefire15076911075819912769 2023-02-11T18-56-29_829-jvmRun1 surefire4024694661964069308tmp surefire_28780908791676557645tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\test-classes;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\classes;C:\Users\kainv\.m2\repository\junit\junit\4.13.1\junit-4.13.1.jar;C:\Users\kainv\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\kainv\.m2\repository\jakarta\servlet\jakarta.servlet-api\5.0.0\jakarta.servlet-api-5.0.0.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\service\target\service-1.0.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\database\target\database-1.0.jar;"/>
+    <property name="surefire.test.class.path" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\test-classes;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web\target\classes;C:\Users\kainv\.m2\repository\junit\junit\4.13.1\junit-4.13.1.jar;C:\Users\kainv\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\kainv\.m2\repository\jakarta\servlet\jakarta.servlet-api\5.0.0\jakarta.servlet-api-5.0.0.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\service\target\service-1.0-SNAPSHOT.jar;C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\database\target\database-1.0-SNAPSHOT.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\kainv"/>
     <property name="user.language" value="ru"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\kainv\AppData\Local\Temp\surefire2211034724450374771\surefirebooter5098157527859841976.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\kainv\AppData\Local\Temp\surefire15076911075819912769\surefirebooter1576257043940934371.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="19.0.1+10-21"/>
@@ -45,6 +45,7 @@
     <property name="localRepository" value="C:\Users\kainv\.m2\repository"/>
     <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\kainv\AppData\Local\Temp\"/>
+    <property name="idea.version" value="2022.3"/>
     <property name="java.version" value="19.0.1"/>
     <property name="user.dir" value="C:\Users\kainv\IdeaProjects\Courses dmdev\Maven-lessons\first-maven\web"/>
     <property name="os.arch" value="amd64"/>
@@ -57,8 +58,7 @@
     <property name="java.vendor" value="Oracle Corporation"/>
     <property name="java.vm.version" value="19.0.1+10-21"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
-    <property name="maven.repo.local" value="C:\Users\kainv\.m2\repository"/>
     <property name="java.class.version" value="63.0"/>
   </properties>
-  <testcase name="testApp" classname="com.kainv.AppTest" time="0.003"/>
+  <testcase name="testApp" classname="com.kainv.AppTest" time="0.004"/>
 </testsuite>

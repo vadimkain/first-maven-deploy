@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.kainv</groupId>
@@ -13,6 +14,7 @@
         <module>database</module>
         <module>service</module>
         <module>web</module>
+        <module>hello-plugin</module>
     </modules>
 
     <scm>
@@ -20,8 +22,8 @@
         <developerConnection>scm:git:git@github.com:vadimkain/first-maven-deploy.git</developerConnection>
         <!-- Указывается ссылка на документацию, но можно и ссылку на репозиторий -->
         <url>https://github.com/vadimkain/first-maven-deploy</url>
-      <tag>first-maven-1.0</tag>
-  </scm>
+        <tag>first-maven-1.0</tag>
+    </scm>
 
     <properties>
         <app.env>dev</app.env>

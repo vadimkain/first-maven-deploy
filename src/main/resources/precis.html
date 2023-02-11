@@ -40,6 +40,92 @@
 </style>
 <body>
 <article>
+    <h1>Maven. 28. Создание собственного plugin (незакончен)</h1>
+    <h3>
+        Незакончен поскольку не нашел решения проблемы. Не могу выполнить goal у кастомного плагина, хотя зависимости
+        все необходимые подтягиваются и модуль видит плагин, когда его подключаю, но сам goal не видит никак.
+    </h3>
+    <p>
+        Создадим кастомный плагин, который будет выводить в консоль Hello World. Для этого создаём модуль maven без
+        архитайпа. Т.к. это будет плагин, то в <code>&lt;packaging>&lt;packaging></code> указываем maven-plugin. Далее,
+        если посмотрим на готовый jar плагин, то увидим, что все они содержат какую-ту аннотацию <code>@Mojo</code> и
+        все они имеют название цели (goal) <code>name="jar"</code> и defaultPhase, на которой будут вызываться. + каждый
+        Mojo класс должен наследоваться от <code>AbstractMojo</code>, переопределить один единственный метод
+        <code>execute</code>, в котором и выполняется основная цель goal.
+    </p>
+    <h2>Попробуем реализовать собственный плагин</h2>
+    <p>
+        Для того чтобы появились классы описанные выше, мы должны указать зависимость:
+    </p>
+    <pre>
+        &lt;dependency>
+            &lt;groupId>org.apache.maven&lt;/groupId>
+            &lt;artifactId>maven-plugin-api&lt;/artifactId>
+            &lt;version>3.1.1&lt;/version>
+            &lt;!-- Все эти зависимости есть в apache maven, поэтому provided -->
+            &lt;scope>provided&lt;/scope>
+        &lt;/dependency>
+    </pre>
+    <p>
+        Теперь у нас появились все необходимые классы кроме аннотаций <code>@Mojo</code>. Это другая зависимость:
+    </p>
+    <pre>
+        &lt;dependency>
+            &lt;groupId>org.apache.maven.plugin-tools&lt;/groupId>
+            &lt;artifactId>maven-plugin-annotations&lt;/artifactId>
+            &lt;version>3.6.0&lt;/version>
+            &lt;scope>provided&lt;/scope>
+        &lt;/dependency>
+    </pre>
+    <p>
+        Теперь идём в модуль hello-plugin и пишем наш плагин <code>HelloMojo</code>:
+    </p>
+    <pre>
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
+public class HelloMojo extends AbstractMojo {
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+
+    }
+}
+    </pre>
+    <p>
+        Этот плагин будет выполнятся автоматически когда попросим выполнить этот Mojo. Для этого должны дать имя через
+        аннотацию <code>@Mojo(name="hello")</code>. Чтобы вывести на консоль информацию, у <code>AbstractMojo</code>
+        есть объект <code>Log log</code> (так же есть у всех дочерних объектов). Вызываем метод
+        <code>getLog().info("Hello from plugin!");</code>. Получаем:
+    </p>
+    <pre>
+@Mojo(name = "hello")
+public class HelloMojo extends AbstractMojo {
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Hello from plugin!");
+    }
+}
+    </pre>
+    <p>
+        Подключим данный плагин в модуле database:
+    </p>
+    <pre>
+    &lt;build>
+        &lt;plugins>
+            &lt;plugin>
+                &lt;groupId>com.kainv&lt;/groupId>
+                &lt;artifactId>hello-plugin&lt;/artifactId>
+                &lt;version>1.0-SNAPSHOT&lt;/version>
+            &lt;/plugin>
+        &lt;/plugins>
+    &lt;/build>
+    </pre>
+    <p>
+        Не забываем выполнить <code>mvn install</code> чтобы можно было указать зависимость
+    </p>
+</article>
+<article>
     <h1>Maven. 27. Release plugin</h1>
     <p>
         Разберёмся с тем, как делать релизные версии наших проектов.
@@ -149,7 +235,8 @@
         Далее плагин собирает и пушит модули.
     </p>
     <p>
-        После того, как тэг готов - можем выполнить <code>mvn release:perform</code>. Т.е. эта цель перейдет в директорию
+        После того, как тэг готов - можем выполнить <code>mvn release:perform</code>. Т.е. эта цель перейдет в
+        директорию
         target проекта и сделает <code>git clone</code> этого проекта после чего перейдет в checkout и сделает
         <code>mvn deploy</code> (или install).
     </p>
@@ -274,7 +361,8 @@
     </p>
     <img src="mvn-26-3.png" width="30%">
     <p>
-        Если разархивируем <b>service-1.0-SNAPSHOT-jar-with-dependencies.jar</b>, то увидим, что зависимости подключились
+        Если разархивируем <b>service-1.0-SNAPSHOT-jar-with-dependencies.jar</b>, то увидим, что зависимости
+        подключились
         как полноценная часть проекта:
     </p>
     <img src="mvn-26-4.png" width="30%">
